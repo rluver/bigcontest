@@ -8,21 +8,27 @@ require("dplyr")
 # data load
 
 source("revised/preprocessing_weather.R", encoding = "UTF-8")
+
 card = fread("D:/bigcon/카드메출데이터/CARD_SPENDING_190809.txt", header = T) %>% 
-  rename(days = STD_DD)
+  rename(days = STD_DD) %>% 
+  mutate(days = ymd(days))
+
 codetable = read_excel("D:/bigcon/카드메출데이터/2019빅콘테스트_신한카드소비데이터_레이아웃_최종_190711.xlsx", 
                        sheet = "(참고) 행정동코드", col_names = T) %>% 
   mutate(`행정동명` = str_replace_all(`행정동명`, "\\.", ","))
 
 
 
+
 # var setting
 
 "%!in%" = Negate("%in%")
-dongcd = (codetable %>% filter(`행정동명` %in% dong) %>% arrange(desc(`구명`), `행정동명`))$`행정동코드` %>% as.numeric()
-jongro = (weather_day %>% filter(gu == "종로구", dong %!in% c("명동", "천연동")))$dong %>% unique()
+jongro = (weather_day %>% filter(gu == "종로구", 
+                                 dong %!in% c("명동", "천연동")))$dong %>% unique()
 nowon = (weather_day %>% filter(gu == "노원구"))$dong %>% unique()
 dong = c(jongro, nowon)
+dongcd = (codetable %>% filter(`행정동명` %in% dong) %>% 
+            arrange(desc(`구명`), `행정동명`))$`행정동코드` %>% as.numeric()
 gender = c("M", "F")
 age =  seq(20, 65, by = 5)
 
@@ -68,12 +74,14 @@ for(y in c(110, 350)){
           
           if(y == 110){
               
-              card1 = card %>% filter(GU_CD == y, DONG_CD == ifelse(y == 110, dongcd[o], dongcd[o+13]),
+              join = left_join(card %>% filter(GU_CD == y, 
+                                      DONG_CD == ifelse(y == 110, dongcd[o], dongcd[o + 13]),
                                       AGE_CD == age[u], SEX_CD == i, MCT_CAT_CD == p) %>% 
-                group_by(days) %>% summarise(CNT = sum(USE_CNT), AMT = sum(USE_AMT))
-              weather1 = weather_day %>% filter(region == ifelse(y == 110, dong[o], dong[o+13])) 
-              
-              join = left_join(card1, weather1, by = "days")
+                                 group_by(days) %>% 
+                                 summarise(CNT = sum(USE_CNT), AMT = sum(USE_AMT)), 
+                               weather_day %>% 
+                filter(dong == ifelse(y == 110, dong[o], dong[o+13])), 
+                by = "days")
               join1 = join %>% filter(pm10 >= 80)
               join2 = join %>% filter(pm10 < 80)
               
@@ -107,13 +115,12 @@ for(y in c(110, 350)){
             } 
           else {
             
-              card1 = card %>% filter(GU_CD == y, DONG_CD == ifelse(y == 110, dongcd[o], dongcd[o+13]),
+              join = left_join(card %>% filter(GU_CD == y, 
+                                      DONG_CD == ifelse(y == 110, dongcd[o], dongcd[o+13]),
                                       AGE_CD == age[u], SEX_CD == i, MCT_CAT_CD == p) %>% 
-                group_by(days) %>% summarise(CNT = sum(USE_CNT), AMT = sum(USE_AMT))
-              weather1 = weather_day %>% 
-                filter(region == ifelse(y == 110, dong[o], dong[o+13])) 
-              
-              join = left_join(card1, weather1, by = "days")
+                group_by(days) %>% summarise(CNT = sum(USE_CNT), AMT = sum(USE_AMT)), 
+                               weather_day %>% filter(region == ifelse(y == 110, dong[o], dong[o+13])), 
+                               by = "days")
               join1 = join %>% filter(pm10 >= 80)
               join2 = join %>% filter(pm10 < 80)
               
@@ -143,9 +150,9 @@ for(y in c(110, 350)){
                 mat21[c(3 * u + 30), c(o + 20), p] = round(d$CNT, 3)
                 mat21[c(3 * u + 31), c(o + 20), p] = round(d$AMT, 3)
               }
-            } 
           }
-        }        
-      }
-    }           
-  }
+        }
+      }        
+    }
+  }           
+}
