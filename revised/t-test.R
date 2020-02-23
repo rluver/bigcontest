@@ -119,7 +119,7 @@ for(y in c(110, 350)){
                                       DONG_CD == ifelse(y == 110, dongcd[o], dongcd[o+13]),
                                       AGE_CD == age[u], SEX_CD == i, MCT_CAT_CD == p) %>% 
                 group_by(days) %>% summarise(CNT = sum(USE_CNT), AMT = sum(USE_AMT)), 
-                               weather_day %>% filter(region == ifelse(y == 110, dong[o], dong[o+13])), 
+                               weather_day %>% filter(dong == ifelse(y == 110, dong[o], dong[o+13])), 
                                by = "days")
               join1 = join %>% filter(pm10 >= 80)
               join2 = join %>% filter(pm10 < 80)
@@ -142,13 +142,13 @@ for(y in c(110, 350)){
               d = sum1 / sum2
               
               if(i == "M"){
-                mat21[c(3 * u - 2), c(o + 20), p] = c
-                mat21[c(3 * u - 1), c(o + 20), p] = round(d$CNT,3)
-                mat21[c(3 * u), c(o + 20), p] = round(d$AMT, 3)
+                mat[c(3 * u - 2), c(o + 20), p] = c
+                mat[c(3 * u - 1), c(o + 20), p] = round(d$CNT,3)
+                mat[c(3 * u), c(o + 20), p] = round(d$AMT, 3)
               } else {
-                mat21[c(3 * u + 29), c(o + 20), p] = c
-                mat21[c(3 * u + 30), c(o + 20), p] = round(d$CNT, 3)
-                mat21[c(3 * u + 31), c(o + 20), p] = round(d$AMT, 3)
+                mat[c(3 * u + 29), c(o + 20), p] = c
+                mat[c(3 * u + 30), c(o + 20), p] = round(d$CNT, 3)
+                mat[c(3 * u + 31), c(o + 20), p] = round(d$AMT, 3)
               }
           }
         }
