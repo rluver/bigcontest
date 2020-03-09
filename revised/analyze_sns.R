@@ -35,28 +35,28 @@ sns = bind_rows(list.files("D:/bigcon/SNS데이터", pattern = "*.xlsx", full.na
 word_change = function(comment){
   
   comment = comment %>% 
-    str_split("[~`!@#$%^&*(){};':,.<>/?+-_|\\[\\]]+") %>% unlist() %>%
-    str_split("[♡+♥+]") %>% unlist() %>% 
-    str_split("[z+k+]") %>% unlist() %>% 
-    str_split("[ㄱ-ㅎ]") %>% unlist() %>% 
-    str_split("[ㅏ-ㅣ]") %>% unlist() %>% 
-    str_split("[\\^]") %>% unlist() %>%
-    str_split("[\\’]") %>% unlist() %>% 
-    str_split("습니다$") %>% unlist() %>% 
-    str_split("됩니다$") %>% unlist() %>% 
-    str_split("으로$") %>% unlist() %>% 
-    str_split("입니다$") %>% unlist() %>% 
-    str_split("까지$") %>% unlist() %>% 
-    str_split("하는$") %>% unlist() %>% 
-    str_split("있겠고$") %>% unlist() %>% 
+    str_split("[~`!@#$%^&*(){};':,.<>/?+-_|\\[\\]]+", simplify = T) %>%
+    str_split("[♡+♥+]", simplify = T) %>% 
+    str_split("[z+k+]", simplify = T) %>%
+    str_split("[ㄱ-ㅎ]", simplify = T) %>%
+    str_split("[ㅏ-ㅣ]", simplify = T) %>%
+    str_split("[\\^]", simplify = T) %>%
+    str_split("[\\’]", simplify = T) %>%
+    str_split("습니다$", simplify = T) %>% 
+    str_split("됩니다$", simplify = T) %>%
+    str_split("으로$", simplify = T) %>%
+    str_split("입니다$", simplify = T) %>%
+    str_split("까지$", simplify = T) %>%
+    str_split("하는$", simplify = T) %>%
+    str_split("있겠고$", simplify = T) %>%
     str_replace("내·외", "내외") %>%
-    str_split("·") %>% unlist() %>% 
+    str_split("·", simplify = T) %>%
     str_replace("^미세먼$", "미세먼지") %>%
     str_replace("^세먼지$", "미세먼지") %>% 
     str_replace("^초미세$", "초미세먼지") %>% 
     str_replace("미세먼지PM10", "미세먼지 PM10") %>% 
     str_replace("미세먼지PM25", "미세먼지 PM25") %>% 
-    str_split(" ") %>% unlist() %>% 
+    str_split(" ", simplify = T) %>%
     str_replace("[♡♥]", "") %>% 
     str_replace("에요$", "") %>% 
     str_replace("예요$", "") %>% 
